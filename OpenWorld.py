@@ -75,7 +75,6 @@ def on_message(message):
     print(str(message.author) + " : " + message.content)
     if str(message.author.id) != client.user.id and message.server is None:  # if author is not the Bot
         bol_command = yield from commands(message.author, message.channel, message.content, message.timestamp, "d")
-        #print("Command is executed: " + str(bol_command))
         if not bol_command and not message.content.startswith("%"):
             content = user_nickname(message.author) + ": " + message.content
             log_channel = gl_places[user_place(message.author)][0]["channel_id"]

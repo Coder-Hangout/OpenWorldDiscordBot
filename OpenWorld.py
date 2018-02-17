@@ -71,16 +71,19 @@ def on_reaction_add(reaction, user):
 @client.event
 @asyncio.coroutine
 def on_message(message):
-
+    global gl_places
     print(str(message.author) + " : " + message.content)
-    if str(message.author.id) != client.user.id:  # if author is not the Bot
+    if str(message.author.id) != client.user.id and message.server is None:  # if author is not the Bot
         bol_command = yield from commands(message.author, message.channel, message.content, message.timestamp, "d")
         #print("Command is executed: " + str(bol_command))
         if not bol_command and not message.content.startswith("%"):
             content = user_nickname(message.author) + ": " + message.content
-
-            yield from send_multiple_message(place_user(user_place(message.author)), message.author.id, content)
+            log_channel = gl_places[user_place(message.author)][0]["channel_id"]
+            log_channel = discord.Object(log_channel)
+            yield from send_message(log_channel, content)
             yield from client.add_reaction(message, "📲")  # send reaction to sender
+            yield from send_multiple_message(place_user(user_place(message.author)), message.author.id, content)
+
 
 
 @asyncio.coroutine
@@ -150,7 +153,7 @@ def add_place(author, answer_channel, server, arguments):
             gl_places[place_name] = [
                 {"name": place_name, "travel_locations": json.loads(travel_locations),
                  "hear_locations": json.loads(hear_locations), "commands": json.loads(command_list),
-                 "user": [place_channel.id], "channel_id": place_channel.id, "emoji": emoji}]
+                 "user": [], "channel_id": place_channel.id, "emoji": emoji}]
             dump_array("world.json", gl_places)
             content = author.mention + " " + place_name + " added successfully."
         except:  # if user is not on a server

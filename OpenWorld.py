@@ -75,7 +75,7 @@ def on_message(message):
     print(str(message.author) + " : " + message.content)
     if str(message.author.id) != client.user.id:  # if author is not the Bot
         bol_command = yield from commands(message.author, message.channel, message.content, message.timestamp, "d")
-        print("Command is executed: " + str(bol_command))
+        #print("Command is executed: " + str(bol_command))
         if not bol_command and not message.content.startswith("%"):
             content = user_nickname(message.author) + ": " + message.content
 
@@ -94,8 +94,10 @@ def send_multiple_message(receiver_list, exception, content):
     for receiver in receiver_list:
         if exception == receiver:
             continue
-        receiver = yield from client.get_user_info(receiver)
-        print(type(receiver))
+        try:
+            receiver = yield from client.get_user_info(receiver)
+        except:  # If user is channel
+            receiver = discord.Object(receiver)
         yield from send_message(receiver, content)
 
 

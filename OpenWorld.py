@@ -85,8 +85,6 @@ def on_message(message):
 
 @asyncio.coroutine
 def send_message(receiver, content):
-    #print(receiver.id)
-    print("#####" + receiver.id)
     message = yield from client.send_message(receiver, content)
     return message
 
@@ -96,7 +94,8 @@ def send_multiple_message(receiver_list, exception, content):
     for receiver in receiver_list:
         if exception == receiver:
             continue
-        receiver = discord.Object(receiver)
+        receiver = yield from client.get_user_info(receiver)
+        print(type(receiver))
         yield from send_message(receiver, content)
 
 

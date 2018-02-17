@@ -84,7 +84,6 @@ def on_message(message):
             yield from send_multiple_message(place_user(user_place(message.author)), message.author.id, content)
 
 
-
 @asyncio.coroutine
 def send_message(receiver, content):
     message = yield from client.send_message(receiver, content)
@@ -148,6 +147,10 @@ def add_place(author, answer_channel, server, arguments):
         yield from send_message(answer_channel, content)
     else:
         try:
+            if not author.server_permissions.administrator:
+                content = "Please ask an Admin to add Places!"
+                yield from send_message(answer_channel, content)
+                return
             place_channel = yield from client.create_channel(server, place_name)
             gl_places[place_name] = [
                 {"name": place_name, "travel_locations": json.loads(travel_locations),

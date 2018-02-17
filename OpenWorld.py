@@ -155,7 +155,7 @@ def add_place(author, answer_channel, server, arguments):
             gl_places[place_name] = [
                 {"name": place_name, "travel_locations": json.loads(travel_locations),
                  "hear_locations": json.loads(hear_locations), "commands": json.loads(command_list),
-                 "user": [], "channel_id": place_channel.id, "emoji": emoji}]
+                 "user": [], "allowed_user":[], "channel_id": place_channel.id, "emoji": emoji}]
             dump_array("world.json", gl_places)
             content = author.mention + " " + place_name + " added successfully."
         except:  # if user is not on a server

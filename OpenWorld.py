@@ -73,9 +73,9 @@ def on_reaction_add(reaction, user):
 def on_message(message):
     global gl_places
     print(str(message.author) + " : " + message.content)
-    if str(message.author.id) != client.user.id and message.server is None:  # if author is not the Bot
+    if str(message.author.id) != client.user.id:  # if author is not the Bot
         bol_command = yield from commands(message.author, message.channel, message.content, message.timestamp, "d")
-        if not bol_command and not message.content.startswith("%"):
+        if not bol_command and not message.content.startswith("%") and message.server is None:
             content = user_nickname(message.author) + ": " + message.content
             log_channel = gl_places[user_place(message.author)][0]["channel_id"]
             log_channel = discord.Object(log_channel)
@@ -120,11 +120,11 @@ def commands(author, channel, content, timestamp, app):
     if content.startswith(".register"):
         yield from register(author, channel, app)
         return True
-    if content.startswith(".addPlace") or content.startswith(".addplace"):
+    if content.lower().startswith(".addplace"):
         arguments = content.split()
         yield from add_place(author, channel, channel.server, arguments)
         return True
-    if content.startswith(".changeLocation") or content.startswith(".changelocation") or content.startswith(".cl")or content.startswith(".cL"):
+    if content.lower().startswith(".changelocation") or content.lower().startswith(".cl"):
         arguments = content.split()
         yield from change_location(author, arguments)
         return True

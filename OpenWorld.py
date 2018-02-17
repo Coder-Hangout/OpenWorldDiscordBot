@@ -282,4 +282,7 @@ def user_nickname(user):
     return nickname
 
 
-client.run("Mzk4NTk4MjYyNTI2ODM2NzM3.DTA3Hg.gDBbb042WpxPe5fTCveSX7bL8X8")
+with open("BotToken.txt", "r") as file:
+    token = file.read()
+client.run(token)
+

@@ -170,7 +170,7 @@ def change_location(user, arguments):
     destination = arguments[1]
 
     for place in gl_places[user_place(user)][0]["travel_locations"]:  # Can user travel to his destination?
-        if place == destination or gl_places[place][0]["emoji"] == destination:  # place name or emoji
+        if place == destination or gl_places[place][0]["emoji"] == destination and user.id in gl_places[user_place(user)][0]["allowed_user"]:  # place name or emoji
             try:
                 gl_places[user_place(user)][0]["user"].remove(user.id)  # remove user from current location
             except:

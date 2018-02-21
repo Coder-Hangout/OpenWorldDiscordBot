@@ -135,12 +135,14 @@ def commands(author, channel, content, timestamp, app):
 
 @asyncio.coroutine
 def add_place(author, answer_channel, server, arguments):
+    print(arguments)
     global gl_places
     place_name = arguments[1]
     travel_locations = arguments[2]
     hear_locations = arguments[3]
     command_list = arguments[4]
-    emoji = arguments[5]
+    closed = arguments[5]
+    emoji = arguments[6]
 
     if place_name in gl_places:
         content = author.mention + " This place already exists!"
@@ -155,7 +157,7 @@ def add_place(author, answer_channel, server, arguments):
             gl_places[place_name] = [
                 {"name": place_name, "travel_locations": json.loads(travel_locations),
                  "hear_locations": json.loads(hear_locations), "commands": json.loads(command_list),
-                 "user": [], "allowed_user":[], "channel_id": place_channel.id, "emoji": emoji}]
+                 "user": [], "closed":closed, "allowed_user":[], "channel_id": place_channel.id, "emoji": emoji}]
             dump_array("world.json", gl_places)
             content = author.mention + " " + place_name + " added successfully."
         except:  # if user is not on a server
@@ -168,22 +170,28 @@ def change_location(user, arguments):
     global gl_places
     global gl_users
     destination = arguments[1]
+    # Can user travel to his destination?
+    print(destination)
+    if destination in gl_places[user_place(user)][0]["travel_locations"] or destination in gl_places[user_place(user)][0]["emoji"]:  # place name or emoji
+        print(type(gl_places[user_place(user)][0]["closed"]))
+        if gl_places[user_place(user)][0]["closed"] == "True":
+            if not user.id in gl_places[user_place(user)][0]["allowed_user"]:
+                send_message(user, "You are not allowed to travel to " + destination + "!")
+                return
 
-    for place in gl_places[user_place(user)][0]["travel_locations"]:  # Can user travel to his destination?
-        if place == destination or gl_places[place][0]["emoji"] == destination and user.id in gl_places[user_place(user)][0]["allowed_user"]:  # place name or emoji
-            try:
-                gl_places[user_place(user)][0]["user"].remove(user.id)  # remove user from current location
-            except:
-                print("")
-            content = "***" + user_nickname(user) + " has arrived at " + place + "***"
-            yield from send_multiple_message(place_user(place), user.id, content)
-            gl_places[place][0]["user"].append(user.id)  # add user to new location
-            gl_users[user.id][0]["place"] = place  # change place in userdata
-            content = "```Welcome to " + place + "! Type \".info\" for info```"
-            yield from send_message(user, content)
-            dump_array("world.json", gl_places)
-            dump_array("user.json", gl_users)
-            return
+        try:
+            gl_places[user_place(user)][0]["user"].remove(user.id)  # remove user from current location
+        except:
+            print("")
+        content = "***" + user_nickname(user) + " has arrived at " + destination + "***"
+        yield from send_multiple_message(place_user(destination), user.id, content)
+        gl_places[destination][0]["user"].append(user.id)  # add user to new location
+        gl_users[user.id][0]["place"] = destination  # change place in userdata
+        content = "```Welcome to " + destination + "! Type \".info\" for info```"
+        yield from send_message(user, content)
+        dump_array("world.json", gl_places)
+        dump_array("user.json", gl_users)
+        return
     # if user cant travel:
     content = "You can not travel to " + destination + ". Type .info to get information about your current location."
     yield from send_message(user, content)

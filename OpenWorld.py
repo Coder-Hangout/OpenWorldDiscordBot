@@ -72,7 +72,7 @@ def on_reaction_add(reaction, user):
 @asyncio.coroutine
 def on_message(message):
     global gl_places
-    print(str(message.author) + " : " + message.content)
+    print("[" + str(message.channel.id) +"]"+ str(message.author) + " : " + message.content)
     if str(message.author.id) != client.user.id:  # if author is not the Bot
         bol_command = yield from commands(message.author, message.channel, message.content, message.timestamp, "d")
         if not bol_command and not message.content.startswith("%") and message.server is None:
@@ -130,6 +130,11 @@ def commands(author, channel, content, timestamp, app):
     if content.startswith(".info") or content.startswith(".i"):
         yield from info(author, channel)
         return True
+    if content.lower().startswith(".editplace"):
+        arguments = content.split()
+        place = arguments[1]
+        yield from edit_place(author, channel, place)
+        return True
     return False
 
 
@@ -166,6 +171,45 @@ def add_place(author, answer_channel, server, arguments):
 
 
 @asyncio.coroutine
+def edit_place(user, channel, location):
+    global gl_places
+    try:
+        if not user.server_permissions.administrator:
+            content = "Please ask an Admin to edit Places!"
+            yield from send_message(channel, content)
+            return
+    except:  # if user is not on a server
+        content = user.mention + "Please execute this command on a server!"
+        yield from send_message(channel, content)
+    content = user.mention + "**Please send the edited place as next message!**"
+    yield from send_message(channel, content)
+    place_data = ""
+    for data in gl_places[user_place(user)][0]:
+        if data != "user" and data != "allowed_user" and data != "channel_id":
+            place_data = place_data + str(gl_places[user_place(user)][0][data]) + " "
+    content = "```" + place_data + "```"
+    yield from send_message(channel, content)
+    def check(message):
+        if message.content.startswith(location):
+            return True
+        else:
+            return False
+    message = yield from client.wait_for_message(120000, author=user, check=check)
+    arguments = message.content.split()
+    place_name = arguments[0]
+    travel_locations = arguments[1]
+    hear_locations = arguments[2]
+    command_list = arguments[3]
+    closed = arguments[4]
+    emoji = arguments[5]
+    gl_places[place_name] = [
+        {"name": place_name, "travel_locations": json.loads(travel_locations),
+         "hear_locations": json.loads(hear_locations), "commands": json.loads(command_list),
+         "user": [], "closed": closed, "allowed_user": [], "channel_id": place_channel.id, "emoji": emoji}]
+    dump_array("world.json", gl_places)
+
+
+@asyncio.coroutine
 def change_location(user, arguments):
     global gl_places
     global gl_users
@@ -183,7 +227,11 @@ def change_location(user, arguments):
             gl_places[user_place(user)][0]["user"].remove(user.id)  # remove user from current location
         except:
             print("")
+        content = "***" + user_nickname(user) + " has left " + user_place(user) + "***"
+        yield from send_message(discord.Object(gl_places[user_place(user)][0]["channel_id"]), content)
+        yield from send_multiple_message(place_user(user_place(user)), user.id, content)
         content = "***" + user_nickname(user) + " has arrived at " + destination + "***"
+        yield from send_message(discord.Object(gl_places[destination][0]["channel_id"]), content)
         yield from send_multiple_message(place_user(destination), user.id, content)
         gl_places[destination][0]["user"].append(user.id)  # add user to new location
         gl_users[user.id][0]["place"] = destination  # change place in userdata

@@ -1,0 +1,9 @@
+/venv/
+__pycache__/
+tcl/
+BotToken.txt
+.idea/
+Include/
+Lib/
+Scripts/
+pip-selfcheck.json

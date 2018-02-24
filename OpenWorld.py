@@ -74,7 +74,7 @@ def on_message(message):
     global gl_places
     print("[" + str(message.channel.id) +"]"+ str(message.author) + " : " + message.content)
     if str(message.author.id) != client.user.id:  # if author is not the Bot
-        bol_command = yield from commands(message.author, message.channel, message.content, message.timestamp, "d")
+        bol_command = yield from commands(message.author, message.channel, message.server, message.content, message.timestamp, "d")
         if not bol_command and not message.content.startswith("%") and message.server is None:
             content = user_nickname(message.author) + ": " + message.content
             log_channel = gl_places[user_place(message.author)][0]["channel_id"]
@@ -96,7 +96,7 @@ def send_multiple_message(receiver_list, exception, content):
         if exception == receiver:
             continue
         try:
-            receiver = yield from client.get_user_info(receiver)
+            receiver = discord.Object(receiver)
         except:  # If user is channel
             receiver = discord.Object(receiver)
         yield from send_message(receiver, content)
@@ -109,7 +109,7 @@ def add_multiple_reactions(message, emojis):
 
 
 @asyncio.coroutine
-def commands(author, channel, content, timestamp, app):
+def commands(author, channel, server, content, timestamp, app):
     global gl_users
     global gl_receiver
     global gl_content
@@ -117,7 +117,7 @@ def commands(author, channel, content, timestamp, app):
     global gl_change_location
     # Commands
     if content.startswith(".register"):
-        yield from register(author, channel, app)
+        yield from register(author, channel, server, app)
         return True
     if content.lower().startswith(".addplace"):
         arguments = content.split()
@@ -127,13 +127,16 @@ def commands(author, channel, content, timestamp, app):
         arguments = content.split()
         yield from change_location(author, arguments)
         return True
-    if content.startswith(".info") or content.startswith(".i"):
+    if content.lower().startswith(".i"):
         yield from info(author, channel)
         return True
     if content.lower().startswith(".editplace"):
         arguments = content.split()
         place = arguments[1]
         yield from edit_place(author, channel, place)
+        return True
+    if content.lower().startswith(".pythonlog"):
+        yield from add_place(author, channel, channel.server, ["", ["the-market"], [], [], "True", ])
         return True
     return False
 
@@ -265,7 +268,7 @@ def info(user, receiver):
 
 
 @asyncio.coroutine
-def register(user, channel, app):
+def register(user, channel, server, app):
     global gl_users
     global gl_places
     for cur_user in gl_users:  # Userdatenbank durchsuchen
@@ -275,10 +278,16 @@ def register(user, channel, app):
                 content = user.mention + " You have already registered. Look in your direct messages!"
                 yield from send_message(channel, content)
                 return
-    gl_users[user.id] = [{"name": user.name, "discriminator": user.discriminator, "app": app,
-                              "nickname": nickname(user), "place": "the-market"}]
+
+    user_nickname = nickname(user)
+    everyone = discord.PermissionOverwrite(read_messages=False)
+    user_perm = discord.PermissionOverwrite(read_messages=True)
+    user_channel = yield from client.create_channel(server, user)
+    gl_users[user_channel.id] = [{"name": user.name, "discriminator": user.discriminator, "app": app,
+                              "nickname": user_nickname, "place": "the-market"}]
     gl_places["the-market"][0]["user"].append(user.id)
     dump_array("world.json", gl_places)
+    print(gl_users)
     dump_array("user.json", gl_users)
     content = user.mention + " You signed in successfully! \n" + "You are now **" + gl_users[user.id][0]["nickname"] + "**"
     yield from send_message(channel, content)

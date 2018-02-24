@@ -6,11 +6,19 @@ class Game:
     It is also made to store a game.
     """
 
-    def __init__(self, name, server_id, world, players):
+    def __init__(self, name, server_id, world, players, client):
         self.name = name
         self.server_id = server_id
         self.world = world
         self.players = players
+        self.client = client
+
+    # client functions
+    def get_client(self):
+        return self.client
+
+    def set_client(self, client):
+        self.client = client
 
     # player functions
     def get_player(self, player_id):
@@ -20,7 +28,7 @@ class Game:
         return self.players
 
     def add_player(self, player):
-        self.players += [player]
+        self.players += {player.get_discord_id():player}
 
     # place/world functions
     def get_place(self, place_id):
@@ -51,7 +59,8 @@ class World:
     It was made that you can save and use a world in multiple games.
     """
 
-    def __init__(self, name, places, commands):
+    def __init__(self, game, name, places, commands):
+        self.game = game
         self.name = name
         self.places = places
         self.commands = commands
@@ -59,6 +68,9 @@ class World:
     # commands function
     def add_command(self, command, keys):
         self.commands += {command: keys}
+
+    def get_command_permissions(self, command):
+        return self.commands[command]
 
     # place functions
     def get_places(self):
@@ -90,7 +102,8 @@ class Place:
     The Place class describes a place were players can go to and talk with other players at this place.
     """
 
-    def __init__(self, name, emoji, channel_id, connections, commands, players):
+    def __init__(self, game, name, emoji, channel_id, connections, commands, players):
+        self.game = game
         self.name = name
         self.emoji = emoji
         self.channel_id = channel_id
@@ -142,7 +155,7 @@ class Place:
     def set_commands(self, commands):
         self.commands = commands
 
-    def get_command_permission(self, command):
+    def get_command_permissions(self, command):
         return self.commands[command]
 
     # player functions
@@ -155,6 +168,10 @@ class Place:
     def player_leaves(self, player_id):
         self.players -= [player_id]
 
+    def send_message(self, player, message):
+        string = player.get_emoji() + player.get_nickname() + ": " + "message"
+        # TODO
+
 
 class Connection:
     """
@@ -162,7 +179,8 @@ class Connection:
     It say who can travel where and how.
     """
 
-    def __init__(self, destination, super_owner, permissions, sneakable):
+    def __init__(self, game, destination, super_owner, permissions, sneakable):
+        self.game = game
         self.destination = destination
         self.super_owner = super_owner
         self.permissions = permissions
@@ -201,7 +219,8 @@ class Player:
     The Player class represents a Player with all his attributes and rights.
     """
 
-    def __init__(self, discord_id, channel_id, nickname, emoji, place, keys):
+    def __init__(self, game, discord_id, channel_id, nickname, emoji, place, keys):
+        self.game = game
         self.discord_id = discord_id
         self.channel_id = channel_id
         self.nickname = nickname
@@ -257,5 +276,16 @@ class Player:
     def delete_key(self, key):
         self.keys -= key
 
-    #message functions
-    def on_message(self,message):#TODO
+    # message functions
+    def on_message(self, message):
+        if message.startswith("."):
+            arguments = message.split()
+            if self.game.get_world().get_command_permissions(arguments[0][1:]) in self.keys:
+            # exectue command //TODO
+            elif self.game.get_place(self.place).get_command_permissions(arguments[0][1:]) in self.keys:
+            # exectue command //TODO
+            else:
+        # send back "no permission"
+        elif not message.startswith("%"):
+            self.game.get_place(self.place).send_message(self,message)
+

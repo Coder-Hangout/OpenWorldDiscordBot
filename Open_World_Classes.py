@@ -158,11 +158,39 @@ class Place:
 
 class Connection:
     """
-
+    This class represents the connection between the places.
+    It say who can travel where and how.
     """
 
     def __init__(self, destination, super_owner, permissions, sneakable):
         self.destination = destination
         self.super_owner = super_owner
         self.permissions = permissions
+        self.sneakable = sneakable
+
+    # destination functions
+    def get_destination(self):
+        return self.destination
+
+    def set_destination(self, destination):
+        self.destination = destination
+
+    # permission functions
+    def get_super_owner(self):
+        return self.super_owner
+
+    def set_super_owner(self, super_owner):
+        self.super_owner = super_owner
+
+    def get_permissions(self):
+        return self.permissions
+
+    def set_permissions(self, permissions):
+        self.permissions = permissions
+
+    #sneakable functions
+    def get_sneakable(self):
+        return self.sneakable
+
+    def set_sneakable(self,sneakable):
         self.sneakable = sneakable

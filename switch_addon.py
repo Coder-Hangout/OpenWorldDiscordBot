@@ -10,3 +10,16 @@ def case(*ca):
         return True
     else:
         return False
+
+
+"""
+while(switch()):
+    if case():
+        <code>
+        break
+    if case():
+        <code>
+        break
+    <code>
+    break
+"""

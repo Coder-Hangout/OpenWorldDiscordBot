@@ -188,9 +188,74 @@ class Connection:
     def set_permissions(self, permissions):
         self.permissions = permissions
 
-    #sneakable functions
+    # sneakable functions
     def get_sneakable(self):
         return self.sneakable
 
-    def set_sneakable(self,sneakable):
+    def set_sneakable(self, sneakable):
         self.sneakable = sneakable
+
+
+class Player:
+    """
+    The Player class represents a Player with all his attributes and rights.
+    """
+
+    def __init__(self, discord_id, channel_id, nickname, emoji, place, keys):
+        self.discord_id = discord_id
+        self.channel_id = channel_id
+        self.nickname = nickname
+        self.emoji = emoji
+        self.place = place
+        self.keys = keys
+
+    # discord_id functions
+    def get_discord_id(self):
+        return self.discord_id
+
+    def set_discord_id(self, discord_id):
+        self.discord_id = discord_id
+
+    # channel_id functions
+    def get_channel_id(self):
+        return self.channel_id
+
+    def set_channel_id(self, channel_id):
+        self.channel_id = channel_id
+
+    # nickname functions
+    def get_nickname(self):
+        return self.nickname
+
+    def set_nickname(self, nickname):
+        self.nickname = nickname
+
+    # emoji functions
+    def get_emoji(self):
+        return self.emoji
+
+    def set_emoji(self, emoji):
+        self.emoji = emoji
+
+    # place functions
+    def get_place(self):
+        return self.place
+
+    def set_place(self, place):
+        self.place = place
+
+    # key functions
+    def get_keys(self):
+        return self.keys
+
+    def set_keys(self, keys):
+        self.keys = keys
+
+    def add_key(self, key):
+        self.keys += key
+
+    def delete_key(self, key):
+        self.keys -= key
+
+    #message functions
+    def on_message(self,message):#TODO

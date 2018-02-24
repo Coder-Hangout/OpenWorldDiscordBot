@@ -36,14 +36,13 @@ class Game:
     def set_name(self, name):
         self.name = name
 
+    def to_string(self):
+        return self.name
+
     # game control functions
-    def start_game(self):
+    def start_game(self):  # TODO
 
-    # TODO
-
-    def stop_game(self):
-
-    # TODO
+    def stop_game(self):  # TODO
 
 
 class World:
@@ -52,4 +51,31 @@ class World:
     It was made that you can save and use a world in multiple games.
     """
 
-    def __init__(self):
+    def __init__(self, name, places):
+        self.name = name
+        self.places = places
+
+    # place functions
+    def get_places(self):
+        return self.places
+
+    def get_place(self, place_id):
+        return self.places[place_id]
+
+    def add_place(self, place):  # TODO
+
+    # world handling functions
+    def build_world(self):  # TODO
+
+    def destroy_world(self):  # TODO
+
+    # name functions
+    def get_name(self):
+        return self.name
+
+    def set_name(self, name):
+        self.name = name
+
+    def to_string(self):
+        return self.name
+    

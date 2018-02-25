@@ -49,9 +49,9 @@ class Game:
 
     # game control functions
     def start_game(self):  # TODO
-
+        print("TODO")
     def stop_game(self):  # TODO
-
+        print("TODO")
 
 class World:
     """
@@ -80,12 +80,12 @@ class World:
         return self.places[place_id]
 
     def add_place(self, place):  # TODO
-
+        print("TODO")
     # world handling functions
     def build_world(self):  # TODO
-
+        print("TODO")
     def destroy_world(self):  # TODO
-
+        print("TODO")
     # name functions
     def get_name(self):
         return self.name
@@ -281,10 +281,13 @@ class Player:
         if message.startswith("."):
             arguments = message.split()
             if self.game.get_world().get_command_permissions(arguments[0][1:]) in self.keys:
+                print("TODO")
             # exectue command //TODO
             elif self.game.get_place(self.place).get_command_permissions(arguments[0][1:]) in self.keys:
+                print("TODO")
             # exectue command //TODO
             else:
+                print("TODO")
         # send back "no permission"
         elif not message.startswith("%"):
             self.game.get_place(self.place).send_message(self,message)

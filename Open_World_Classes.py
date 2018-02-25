@@ -171,7 +171,7 @@ class Place:
     def send_message(self, player, message):
         string = player.get_emoji() + player.get_nickname() + ": " + "message"
         for p in self.players:
-            if p != player:
+            if p != player.get_keys()[0]:
                 self.game.get_player(p).send_message(string)
 
 

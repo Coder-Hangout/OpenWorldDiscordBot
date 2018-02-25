@@ -4,4 +4,4 @@ This is a Discord Bot, that enables you to play in an open world. You can go fro
 
 This bot was written in Python 3. In order to use this bot you have to install the [discord.py](https://github.com/Rapptz/discord.py) API.
 
-``Status: probaply not fully working because of rewrite
+``Status: probaply not fully working because of rewrite``

@@ -72,7 +72,7 @@ def on_reaction_add(reaction, user):
 @asyncio.coroutine
 def on_message(message):
     global gl_places
-    print("[" + str(message.channel.id) +"]"+ str(message.author) + " : " + message.content)
+    print("[" + str(message.channel.id) +"]" + str(message.author) + " : " + message.content)
     if str(message.author.id) != client.user.id:  # if author is not the Bot
         bol_command = yield from commands(message.author, message.channel, message.server, message.content, message.timestamp, "d")
         if not bol_command and not message.content.startswith("%") and message.server is None:

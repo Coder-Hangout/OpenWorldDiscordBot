@@ -52,7 +52,18 @@ class Game:
         print("TODO")
     def stop_game(self):  # TODO
         print("TODO")
-
+    def start_bot(self):
+        import discord
+        import asyncio
+        client = discord.Client()
+        with open("BotToken.txt", "r") as file:
+            token = file.read()
+        client.run(token)
+    def stop_bot(self):
+        import discord
+        import asyncio
+        client = discord.Client()
+        client.close()
 class World:
     """
     The class World saves all places and has a name.
@@ -293,4 +304,7 @@ class Player:
         # send back "no permission"
         elif not message.startswith("%"):
             self.game.get_place(self.place).send_message(self,message)
+
+
+
 

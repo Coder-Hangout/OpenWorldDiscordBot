@@ -70,8 +70,7 @@ class World:
     It was made that you can save and use a world in multiple games.
     """
 
-    def __init__(self, game, name, places, commands):
-        self.game = game
+    def __init__(self, name, places, commands):
         self.name = name
         self.places = places
         self.commands = commands
